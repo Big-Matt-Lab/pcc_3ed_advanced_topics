@@ -18,3 +18,11 @@ class Settings:
 
         # Ship settings
         self.ship_speed = 1.5
+
+        # Projectile settings
+        self.projectiles_allowed = 5
+        self.projectile_speed = 2.0
+        self.projectile_width = 3
+        self.projectile_height = 15
+        self.projectile_color = (60, 60, 60)
+        
