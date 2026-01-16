@@ -88,7 +88,7 @@ class AlienInvasion:
 
         # make the most recent screen visible
         pygame.display.flip()
-
+print("I am going to print a stupidly long line to see if the linting eextensions will call out the fact that this line is closing in on ove 150 characters.")
 
 if __name__ == "__main__":
     # Create a game instance and run the game
