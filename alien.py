@@ -1,26 +1,28 @@
 """
-Docstring for ship
+Docstring for alien
 """
 import pygame
+from pygame.sprite import Sprite
 
-class Ship:
+class Alien:
     """
-    A class to manage the ship
+    A class to represent a single alien in the fleet
     """
     def __init__(self, ai_game):
         """
-        Initialize the ship and set its starting position
+        Initialize the alien and set its starting position
         """
+        super().__init__()
         self.screen = ai_game.screen
-        self.settings = ai_game.settings
-        self.screen_rect = ai_game.screen.get_rect()
+        
 
-        # Load the ship image and get rect.
-        self.image = pygame.image.load('images/ship.bmp')
+        # Load the alien image and get rect.
+        self.image = pygame.image.load('images/alien.bmp')
         self.rect = self.image.get_rect()
 
-        # Start each ship at the bottom center of the screen
-        self.rect.midbottom = self.screen_rect.midbottom
+        # Start each alien at the top left of the screen
+        self.rect.x = self.rect.width
+        self.rect.y = self.rect.height
 
-        # Store a float for the ship's exact horizontal position
+        # Store a float for the alien's exact horizontal position
         self.x = float(self.rect.x)
