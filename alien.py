@@ -4,7 +4,7 @@ Docstring for alien
 import pygame
 from pygame.sprite import Sprite
 
-class Alien:
+class Alien(Sprite):
     """
     A class to represent a single alien in the fleet
     """
@@ -14,7 +14,6 @@ class Alien:
         """
         super().__init__()
         self.screen = ai_game.screen
-        
 
         # Load the alien image and get rect.
         self.image = pygame.image.load('images/alien.bmp')

@@ -1,11 +1,9 @@
-"""
-alien_invasion game
+"""alien_invasion game
 Python Crash Course chapters 12 - 14
 Creating a 2D game using python and pygame
 """
 # import packages
 import sys
-
 import pygame
 
 from settings import Settings
@@ -28,6 +26,8 @@ class AlienInvasion:
         self.ship = Ship(self)
         self.projectiles = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
+
+        self._create_fleet()
 
     def run_game(self):
         """Start the main loop for the game"""
@@ -90,11 +90,36 @@ class AlienInvasion:
         # Redraw the screen during each pass through the loop
         self.screen.fill(self.settings.bg_color)
         for projectile in self.projectiles.sprites():
-            projectile.draw_projectile()
+            projectile.draw_projectile() # type: ignore
         self.ship.blitme()
+        self.aliens.draw(self.screen)
 
         # make the most recent screen visible
         pygame.display.flip()
+
+    def _create_fleet(self):
+        """ Create a fleet of aliens """
+        # Let's create an Alien and add aliens to fill screen width
+        #Spacing is one alien wide and one alien height
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+
+        current_x, current_y = alien_width, alien_height
+        while current_y < (self.settings.screen_height - 3 * alien_height):
+            while current_x < (self.settings.screen_width - 2 * alien_width):
+                self._create_alien(current_x, current_y)
+                current_x += 2 * alien_width
+
+            # Finished row; reset x and increment y
+            current_x = alien_width
+            current_y += 2 * alien_height
+    def _create_alien(self, x_position, y_position):
+        """ Create an alien and place it in the row."""
+        new_alien = Alien(self)
+        new_alien.x = x_position
+        new_alien.rect.x = x_position
+        new_alien.rect.y = y_position
+        self.aliens.add(new_alien)
 
 if __name__ == "__main__":
     # Create a game instance and run the game
