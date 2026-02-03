@@ -35,6 +35,7 @@ class AlienInvasion:
             self._check_events()
             self.ship.update()
             self._update_projectiles()
+            self._update_aliens()
             self._update_screen()
             self.clock.tick(60)
 
@@ -85,6 +86,10 @@ class AlienInvasion:
         for projectile in self.projectiles.copy():
             if projectile.rect.bottom <= 0:
                 self.projectiles.remove(projectile)
+    
+    def _update_aliens(self):
+        """ Update the positions of all the aliens in the fleet """
+        self.aliens.update()
 
     def _update_screen(self):
         # Redraw the screen during each pass through the loop
