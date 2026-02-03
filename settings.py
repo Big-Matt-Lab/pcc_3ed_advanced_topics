@@ -25,3 +25,7 @@ class Settings:
         self.projectile_width = 3
         self.projectile_height = 15
         self.projectile_color = (60, 60, 60)
+
+        # Alien settings
+        self.alien_speed = 1.0
+        
