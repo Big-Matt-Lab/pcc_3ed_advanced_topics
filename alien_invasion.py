@@ -4,9 +4,12 @@ Creating a 2D game using python and pygame
 """
 # import packages
 import sys
+from time import sleep
+
 import pygame
 
 from settings import Settings
+from game_stats import GameStats
 from ship import Ship
 from projectile import Projectile
 from alien import Alien
@@ -19,25 +22,34 @@ class AlienInvasion:
         pygame.init()
         self.clock = pygame.time.Clock()
         self.settings = Settings()
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((1200, 800))
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion")
+
+        # Create an instance to store game stats
+        self.stats = GameStats(self)
+
         self.ship = Ship(self)
         self.projectiles = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
 
         self._create_fleet()
 
+        # Start Alien Invasion in an active state
+        self.game_active = True
+
+
     def run_game(self):
         """Start the main loop for the game"""
         while True:
             self._check_events()
-            self.ship.update()
-            self._update_projectiles()
-            self._update_aliens()
-            self._update_screen()
-            self.clock.tick(60)
+            if self.game_active:
+                self.ship.update()
+                self._update_projectiles()
+                self._update_aliens()
+                self._update_screen()
+                self.clock.tick(60)
 
     def _check_keydown_events(self, event):
         """ Respond to keypresses."""
@@ -86,11 +98,31 @@ class AlienInvasion:
         for projectile in self.projectiles.copy():
             if projectile.rect.bottom <= 0:
                 self.projectiles.remove(projectile)
+        
+        self._check_bullet_alien_collisions()
+
+    def _check_bullet_alien_collisions(self):
+        """ Respond to bullet-alien collisions """
+        
+        # Check for any projectiles that hit aliens
+        # If a hit, get rid of bullet and alien
+        collisions = pygame.sprite.groupcollide(self.projectiles, self.aliens, False, True)
+        if not self.aliens:
+            # Destroy existing projectiles and create new fleet
+            self.projectiles.empty()
+            self._create_fleet()
     
     def _update_aliens(self):
         """ Check if the fleet is at an edge, then update positions """
         self._check_fleet_edges()
         self.aliens.update()
+
+        # Look for alien-ship collisions
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+        
+        # Look for aliens hitting the bottom of the screen
+        self._check_aliens_bottom()
 
     def _update_screen(self):
         # Redraw the screen during each pass through the loop
@@ -139,6 +171,33 @@ class AlienInvasion:
         for alien in self.aliens.sprites():
             alien.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
+
+    def _ship_hit(self):
+        """ Respond to the ship being hit by an alien """
+        if self.stats.ships_left > 0:
+            # Decrement shipts left
+            self.stats.ships_left -= 1
+
+            # Get rid of any remaining aliens and projectiles
+            self.aliens.empty()
+            self.projectiles.empty()
+
+            # Create a new fleet and center the ship
+            self._create_fleet()
+            self.ship.center_ship()
+
+            # Pause
+            sleep(0.5)
+        else:
+            self.game_active = False
+
+    def _check_aliens_bottom(self):
+        """ Check if any aliens have reached the bottom of the screen """
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= self.settings.screen_height:
+                # Treat this the same as if the ship got hit
+                self._ship_hit()
+                break
         
 
 if __name__ == "__main__":
