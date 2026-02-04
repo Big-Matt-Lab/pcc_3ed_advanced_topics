@@ -12,7 +12,7 @@ class Settings:
         Init method for settings class
         """
         # Screen settings
-        self.screen_width = 1200
+        self.screen_width = 900
         self.screen_height = 660
         self.bg_color = (230, 230, 230)
 
